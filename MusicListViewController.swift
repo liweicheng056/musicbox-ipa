@@ -438,7 +438,7 @@ final class MusicListViewController: UIViewController,
                 let block = b[pos..<(pos + len)]
                 var p = 0
                 guard block.count >= 4 else { break }
-                let vendor = Int(block[p]) | (Int(block[p + 1]) << 8) | (Int(block[p + 2]) << 8) | (Int(block[p + 3]) << 24)
+                let vendor = Int(block[p]) | (Int(block[p + 1]) << 8) | (Int(block[p + 2]) << 16) | (Int(block[p + 3]) << 24)
                 p += 4 + vendor
                 guard block.count >= p + 4 else { break }
                 let count = Int(block[p]) | (Int(block[p + 1]) << 8) | (Int(block[p + 2]) << 8) | (Int(block[p + 3]) << 24)
