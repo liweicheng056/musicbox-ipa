@@ -47,6 +47,10 @@ jobs:
           if [ -d songs ]; then
             cp -R songs build/Payload/MusicBox.app/songs
           fi
+          # 背景图
+          if [ -f bg.jpg ]; then
+            cp bg.jpg build/Payload/MusicBox.app/bg.jpg
+          fi
           # 先用 ad-hoc 签名让包体自洽；用户用自己的证书重签即可覆盖
           codesign -f -s - --deep build/Payload/MusicBox.app
           ls -lh build/Payload/MusicBox.app

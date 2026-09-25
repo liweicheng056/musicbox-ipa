@@ -33,6 +33,9 @@ final class MusicListViewController: UIViewController,
     private let lyricsHint = UILabel()
     private let pasteButton = UIButton(type: .system)
 
+    private let backgroundImageView = UIImageView()
+    private let dimView = UIView()
+
     private var documentsDir: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
@@ -43,6 +46,45 @@ final class MusicListViewController: UIViewController,
         setupUI()
         setupRemoteCommands()
         scanTracks()
+    }
+
+    // MARK: - background image
+    private func setupBackground() {
+        if let url = Bundle.main.url(forResource: "bg", withExtension: "jpg"),
+           let img = UIImage(contentsOfFile: url.path) {
+            backgroundImageView.image = img
+        }
+        backgroundImageView.contentMode = .scaleAspectFill
+        backgroundImageView.isUserInteractionEnabled = false
+        backgroundImageView.translatesAutoresizingMaskIntoConstraints = false
+        view.insertSubview(backgroundImageView, at: 0)
+
+        dimView.backgroundColor = UIColor(white: 0, alpha: 0.28)
+        dimView.isUserInteractionEnabled = false
+        dimView.translatesAutoresizingMaskIntoConstraints = false
+        view.insertSubview(dimView, aboveSubview: backgroundImageView)
+
+        NSLayoutConstraint.activate([
+            backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            dimView.topAnchor.constraint(equalTo: view.topAnchor),
+            dimView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            dimView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            dimView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
+
+        tableView.backgroundColor = .clear
+        titleLabel.textColor = .white
+        timeLabel.textColor = UIColor(white: 1, alpha: 0.85)
+        prevButton.tintColor = .white
+        playPauseButton.tintColor = .white
+        nextButton.tintColor = .white
+        slider.tintColor = .white
+        pasteButton.tintColor = .white
+        lyricsHint.textColor = UIColor(white: 1, alpha: 0.8)
+        lyricsTextView.textColor = .white
     }
 
     // MARK: - UI
@@ -61,7 +103,7 @@ final class MusicListViewController: UIViewController,
         view.addSubview(tableView)
 
         nowPlayingBar.translatesAutoresizingMaskIntoConstraints = false
-        nowPlayingBar.backgroundColor = .secondarySystemBackground
+        nowPlayingBar.backgroundColor = UIColor(white: 0, alpha: 0.38)
         view.addSubview(nowPlayingBar)
 
         prevButton.setTitle("⏮", for: .normal)
@@ -101,7 +143,7 @@ final class MusicListViewController: UIViewController,
 
         // lyrics panel
         lyricsView.translatesAutoresizingMaskIntoConstraints = false
-        lyricsView.backgroundColor = .systemBackground
+        lyricsView.backgroundColor = UIColor(white: 0, alpha: 0.38)
         lyricsView.isHidden = true
         view.addSubview(lyricsView)
 
@@ -170,6 +212,8 @@ final class MusicListViewController: UIViewController,
             timeLabel.centerYAnchor.constraint(equalTo: slider.centerYAnchor),
             timeLabel.widthAnchor.constraint(equalToConstant: 46),
         ])
+
+        setupBackground()
     }
 
     // MARK: - scan (bundle songs + Documents)
@@ -477,7 +521,7 @@ final class MusicListViewController: UIViewController,
                 let start = builder.length
                 builder.append(NSAttributedString(string: txt + "\n", attributes: [
                     .font: UIFont.systemFont(ofSize: 17),
-                    .foregroundColor: UIColor.secondaryLabel,
+                    .foregroundColor: UIColor(white: 1, alpha: 0.65),
                     .paragraphStyle: para,
                 ]))
                 lyricLineRanges.append(NSRange(location: start, length: txt.count))
@@ -509,7 +553,7 @@ final class MusicListViewController: UIViewController,
         para.lineSpacing = 8
         let builder = NSMutableAttributedString()
         for (i, (_, txt)) in lines.enumerated() {
-            let color: UIColor = (i == idx) ? .label : .secondaryLabel
+            let color: UIColor = (i == idx) ? .white : UIColor(white: 1, alpha: 0.65)
             let font = (i == idx) ? UIFont.boldSystemFont(ofSize: 18) : UIFont.systemFont(ofSize: 17)
             builder.append(NSAttributedString(string: txt + "\n", attributes: [
                 .font: font, .foregroundColor: color, .paragraphStyle: para,
@@ -528,8 +572,12 @@ final class MusicListViewController: UIViewController,
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let c = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        c.backgroundColor = .clear
         c.textLabel?.text = tracks[indexPath.row].deletingPathExtension().lastPathComponent
         c.textLabel?.font = .systemFont(ofSize: 15)
+        c.textLabel?.textColor = .white
+        c.textLabel?.shadowColor = UIColor(white: 0, alpha: 0.8)
+        c.textLabel?.shadowOffset = CGSize(width: 0, height: 1)
         return c
     }
 
