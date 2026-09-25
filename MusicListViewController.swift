@@ -420,7 +420,7 @@ final class MusicListViewController: UIViewController,
     private func extractEmbeddedLyrics(_ url: URL) -> String? {
         let asset = AVURLAsset(url: url)
         for item in asset.metadata {
-            if item.commonKey == .commonKeyLyrics {
+            if item.commonKey?.rawValue == "lyrics" {
                 return item.stringValue?.trimmingCharacters(in: .whitespacesAndNewlines)
             }
         }
