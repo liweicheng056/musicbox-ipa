@@ -332,7 +332,7 @@ final class MusicListViewController: UIViewController,
     }
 
     private func setupRemoteCommands() {
-        let rc = MPRemoteCommandCenter.default()
+        let rc = MPRemoteCommandCenter.shared()
         rc.playCommand.addTarget { [weak self] _ in
             self?.player?.play(); self?.playPauseButton.setTitle("⏸", for: .normal); return .success
         }
@@ -420,7 +420,7 @@ final class MusicListViewController: UIViewController,
     private func extractEmbeddedLyrics(_ url: URL) -> String? {
         let asset = AVURLAsset(url: url)
         for item in asset.metadata {
-            if item.commonKey == .lyrics {
+            if item.commonKey == .commonKeyLyrics {
                 return item.stringValue?.trimmingCharacters(in: .whitespacesAndNewlines)
             }
         }
